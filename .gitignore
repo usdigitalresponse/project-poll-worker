@@ -6,3 +6,6 @@
 
 .DS_Store
 scratch.*
+/.block/
+/.tmp/
+/node_modules/
