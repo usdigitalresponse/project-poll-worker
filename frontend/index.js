@@ -4,14 +4,17 @@ import React, { useEffect, useState } from 'react';
 
 // features
 import setupFeature from './features/setup';
+import trainingFeature from './features/training';
 import helpdeskFeature from './features/helpdesk';
 
 const features = [];
 features.push(setupFeature);
+features.push(trainingFeature);
 features.push(helpdeskFeature);
 
 const unsupportedTypes = [
   FieldType.BUTTON,
+  FieldType.COUNT,
   FieldType.CREATED_TIME,
   FieldType.FORMULA,
   FieldType.LAST_MODIFIED_BY,
@@ -21,6 +24,7 @@ const unsupportedTypes = [
 
 const typeNames = {};
 typeNames[FieldType.BUTTON] = 'Button';
+typeNames[FieldType.COUNT] = 'Count';
 typeNames[FieldType.CREATED_TIME] = 'Created time';
 typeNames[FieldType.FORMULA] = 'Formula';
 typeNames[FieldType.LAST_MODIFIED_BY] = 'Last modified by';
@@ -131,6 +135,8 @@ function getFieldStatus(field) {
       } else {
         return <Box>{changeText} with label "{field.options.label}" and Action "{field.options.action}"</Box>;
       }
+    } else if (field.type === FieldType.COUNT) {
+      return <Box>{changeText} on "{field.options.recordLinkFieldName}"</Box>;
     } else {
       return <Box>{changeText}</Box>;
     }
