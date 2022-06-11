@@ -213,6 +213,15 @@ function App() {
       }
     }
 
+    // insert records
+    for (const table of tables) {
+      if (table.records) {
+        // TODO add in batches of 50 if needed
+        let records = table.records.map((r) => { return {fields: r} });
+        await base.getTableByName(table.name).createRecordsAsync(records);
+      }
+    }
+
     refresh();
   }
 

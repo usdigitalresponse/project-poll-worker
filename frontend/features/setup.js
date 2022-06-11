@@ -1,6 +1,17 @@
 import { FieldType } from '@airtable/blocks/models';
 import { colors } from '@airtable/blocks/ui';
 
+// TODO make configurable in UI
+const roles = [
+  {title: 'Precinct Lead', fullTitle: 'Precinct Lead'},
+  {title: 'Clerk', fullTitle: 'Clerk'},
+  {title: 'Maj Ins', fullTitle: 'Majority Inspector'},
+  {title: 'Min Ins', fullTitle: 'Minority Inspector'},
+  {title: 'Mach Op', fullTitle: 'Machine Operator'},
+  {title: 'Mach Ins', fullTitle: 'Machine Inspector'},
+  {title: 'Other Precinct Volunteers', fullTitle: 'Pink Slip Worker'}
+];
+
 const name = 'Poll Workers & Precincts';
 const tables = [
   {
@@ -15,7 +26,13 @@ const tables = [
         name: 'Full Title',
         type: FieldType.SINGLE_LINE_TEXT
       }
-    ]
+    ],
+    records: roles.map((role) => {
+      return {
+        'Title': role.title,
+        'Full Title': role.fullTitle
+      };
+    })
   },
   {
     name: 'Precincts',
@@ -335,76 +352,18 @@ const tables = [
           ]
         }
       },
-      {
-        name: 'Precinct Lead',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a J.O.E. working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: true,
-          inverseLinkFieldName: 'Precinct Lead'
-        }
-      },
-      {
-        name: 'Clerk',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a Clerk working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: true,
-          inverseLinkFieldName: 'Clerk'
-        }
-      },
-      {
-        name: 'Maj Ins',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a Majority Inspector working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: false,
-          inverseLinkFieldName: 'Maj Ins'
-        }
-      },
-      {
-        name: 'Min Ins',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a Minority Inspector working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: false,
-          inverseLinkFieldName: 'Min Ins'
-        }
-      },
-      {
-        name: 'Mach Op',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a Machine Operator working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: false,
-          inverseLinkFieldName: 'Mach Op'
-        }
-      },
-      {
-        name: 'Mach Ins',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a Machine Inspector working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: false,
-          inverseLinkFieldName: 'Mach Ins'
-        }
-      },
-      {
-        name: 'Other Precinct Volunteers',
-        type: FieldType.MULTIPLE_RECORD_LINKS,
-        description: 'To assign this Poll Worker as a Pink Slip Worker working in the current election, select the precinct.',
-        options: {
-          linkedTableName: 'Precincts',
-          prefersSingleRecordLink: false,
-          inverseLinkFieldName: 'Other Precinct Volunteers'
-        }
-      },
+      ...roles.map((role) => {
+        return {
+          name: role.title,
+          type: FieldType.MULTIPLE_RECORD_LINKS,
+          description: `To assign this Poll Worker as a ${role.fullTitle} working in the current election, select the precinct.`,
+          options: {
+            linkedTableName: 'Precincts',
+            prefersSingleRecordLink: true,
+            inverseLinkFieldName: role.title
+          }
+        };
+      }),
       {
         name: 'Created On',
         type: FieldType.CREATED_TIME,
