@@ -12,6 +12,15 @@ const roles = [
   {title: 'Other Precinct Volunteers', fullTitle: 'Pink Slip Worker'}
 ];
 
+function roleFormula(roles) {
+  const role = roles[0];
+  if (roles.length === 1) {
+    return `"${role.fullTitle}"`;
+  } else {
+    return `IF({${role.title}}, "${role.fullTitle}", ${roleFormula(roles.slice(1))})`;
+  }
+}
+
 const name = 'Poll Workers & Precincts';
 const tables = [
   {
@@ -92,7 +101,7 @@ const tables = [
         type: FieldType.FORMULA,
         description: 'If the Poll Worker is staffed in a role in the Precincts table for the current election, name the role here.',
         options: {
-          formula: 'IF({Precinct Lead}, "Precinct Lead", IF({Maj Ins}, "Majority Inspector", IF({Min Ins}, "Minority Inspector", IF({Mach Op}, "Machine Operator", IF({Clerk}, "Clerk")))))'
+          formula: roleFormula(roles)
         }
       },
       {
