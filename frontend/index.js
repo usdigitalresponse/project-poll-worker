@@ -12,6 +12,17 @@ features.push(setupFeature);
 features.push(trainingFeature);
 features.push(helpdeskFeature);
 
+const tableOrder = [
+  'Poll Workers',
+  'Precincts',
+  'Training Sessions',
+  'Training Signups',
+  'Poll Workers Info Updates',
+  'Election Day Helpdesk',
+  'Helpdesk Staff',
+  'Title + Role'
+];
+
 const unsupportedTypes = [
   FieldType.BUTTON,
   FieldType.COUNT,
@@ -160,6 +171,18 @@ function Field(props) {
   );
 }
 
+function showItem(heading, success, details) {
+  return (
+    <Box>
+      <Heading size="small">
+        {heading}
+        {success && <Icon name="check" size={16} fillColor="#20c933" marginLeft={1} />}
+      </Heading>
+      {details}
+    </Box>
+  );
+}
+
 function Table(props) {
   const { showDetails, table } = props;
 
@@ -167,19 +190,24 @@ function Table(props) {
     const fields = table.fields.filter((field) => field.status !== 'success').map((field) => {
       return <Field key={field.name} field={field} />;
     });
-
-    return (
-      <Box>
-        <Heading size="small">
-          {table.name}
-          {fields.length == 0 && <Icon name="check" size={16} fillColor="#20c933" marginLeft={1} />}
-        </Heading>
-        {fields}
-      </Box>
-    );
+    const success = fields.length === 0;
+    return showItem(table.name, success, fields);
   } else {
     return <Heading size="small">{table.name} - {tableStatus(table)}</Heading>;
   }
+}
+
+// equality check for simple arrays
+function arraysEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function showTableOrder(base) {
+  const currentOrder = base.tables.map(t => t.name).filter(t => tableOrder.includes(t))
+  const expectedOrder = tableOrder.filter(t => base.getTableByNameIfExists(t) !== null);
+  const success = arraysEqual(currentOrder, expectedOrder);
+  const details = !success && <Box marginBottom={3}>Reorder tables to {expectedOrder.join(", ")}</Box>;
+  return showItem('Table Order', success, details);
 }
 
 function App() {
@@ -273,6 +301,7 @@ function App() {
           <Button onClick={refresh} position="absolute" top={3} right={3}>Refresh</Button>
         }
         {tableItems}
+        {showDetails && showTableOrder(base)}
       </Box>
     );
   }
